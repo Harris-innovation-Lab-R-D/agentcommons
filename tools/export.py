@@ -32,7 +32,7 @@ def export_dataset(db_path: Path, tags: list[str], out_path: Path, name: str) ->
     # Fetch domain-only memories matching the requested tags
     filter_tags = set(tags)
     all_memories = conn.execute(
-        "SELECT id, content, embedding, tags, created_at FROM memories WHERE scope IN ('agent', 'team')"
+        "SELECT id, content, embedding, tags, created_at FROM memories WHERE scope = 'team'"
     ).fetchall()
     conn.close()
 
@@ -54,6 +54,8 @@ def export_dataset(db_path: Path, tags: list[str], out_path: Path, name: str) ->
     # Create output directory
     out_path.mkdir(parents=True, exist_ok=True)
     db_out = out_path / "knowledge.db"
+    if db_out.exists():
+        db_out.unlink()
 
     # Build the export database — identical schema, identity stripped
     export_conn = sqlite3.connect(db_out)
