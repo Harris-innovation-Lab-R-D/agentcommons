@@ -1,5 +1,7 @@
 # Never commit actual databases — they may contain sensitive data
 *.db
+# Exception: community dataset knowledge databases are intentionally committed
+!community/**/knowledge.db
 
 # Never commit credentials
 .env
