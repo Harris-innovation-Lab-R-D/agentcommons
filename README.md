@@ -31,8 +31,25 @@ agentcommons/
 │   └── v1.0.0/
 ├── submissions/        # Submission staging area and templates
 │   └── .template/      # Copy this to submit a dataset
-├── tools/              # Export, import, merge, and validation CLI tools
-└── docs/               # Standards, submission guide, merge documentation
+├── tools/              # Export, import, merge, validation, and active learning CLI tools
+│   ├── agentcommons_pretask.py      # Pre-task query module
+│   ├── agentcommons_posttask.py     # Post-task export module
+│   ├── agentcommons_active.py       # Unified active learning integration
+│   ├── agentcommons_conflict.py     # Conflict detection and management
+│   └── ...
+├── examples/           # Integration examples for agent implementations
+│   ├── agent-integration-example.py
+│   ├── agent-integration-sales-example.py
+│   └── conflict-resolution-example.py
+├── tests/              # Test suite for active learning modules
+│   └── test_active_learning.py
+├── migrations/         # Database migrations (conflicts table, etc.)
+├── docker/             # Docker deployment configuration
+│   ├── docker-compose.yml
+│   └── .env.example
+├── docs/               # Standards, submission guide, active learning guide, merge documentation
+│   └── active-learning-guide.md
+└── .gitignore
 ```
 
 ---
@@ -124,6 +141,29 @@ Datasets using the same embedding model as your server are imported directly. Da
 | Community Hub | This repository — open source, community-governed |
 | Black Box Deployment | Self-hosted, air-gapped private instance for enterprise/government |
 | Hosted Private Hub | Managed private hub for organizations that don't want to self-host |
+
+---
+
+## Active Learning System
+
+AgentCommons includes an integrated **active learning system** that enables agents to learn from each other through a four-phase cycle:
+
+1. **Pre-Task Query** (`agentcommons_pretask.py`) — Agents query AgentCommons for related past work before starting a task
+2. **Task Execution** — Agent performs work enriched with institutional memory context
+3. **Post-Task Export** (`agentcommons_posttask.py`) — Learnings are extracted and stored back in AgentCommons
+4. **Conflict Resolution** (`agentcommons_conflict.py`) — Competing approaches are detected and escalated for user review
+
+**Use cases:**
+- Agents consulting past similar work before starting new tasks
+- Detecting when two agents have used different approaches to the same problem
+- Escalating approach conflicts for human decision-making
+- Building organizational knowledge over time
+
+**For integration examples**, see:
+- `examples/agent-integration-example.py` — Basic pre/post task flow
+- `examples/agent-integration-sales-example.py` — Domain-specific example
+- `examples/conflict-resolution-example.py` — Handling approach conflicts
+- `docs/active-learning-guide.md` — Complete integration guide
 
 ---
 

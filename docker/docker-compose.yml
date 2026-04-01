@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  # MCP Memory Server - Centralized memory/knowledge base
+  mcp-memory-server:
+    image: mcptools/memory-server:latest
+    container_name: agentcommons-mcp
+    ports:
+      - "${MCP_PORT:-8765}:8765"
+    volumes:
+      - agentcommons_data:/data
+    environment:
+      # Memory server config
+      PORT: 8765
+      DATA_DIR: /data
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      
+      # Optional: Database path
+      MEMORY_DB: /data/agentcommons.db
+      
+      # Optional: Embedding model
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-nomic-embed-text}
+      
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    restart: unless-stopped
+    networks:
+      - agentcommons-network
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  agentcommons-network:
+    driver: bridge
+    name: agentcommons-network
+
+volumes:
+  agentcommons_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_MOUNT_PATH:-./_data}
